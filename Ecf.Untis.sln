@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8d2ce833-6263-4910-a480-ffe059d958c2}") = "Ecf.Untis", "src\Ecf.Untis.csproj", "{99f2abf1-fed9-44e1-8a4e-c23b8b724dc8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99f2abf1-fed9-44e1-8a4e-c23b8b724dc8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99f2abf1-fed9-44e1-8a4e-c23b8b724dc8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99f2abf1-fed9-44e1-8a4e-c23b8b724dc8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99f2abf1-fed9-44e1-8a4e-c23b8b724dc8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {837ed2c3-3923-4eae-8ce1-adaa73b7e699}
+	EndGlobalSection
+EndGlobal

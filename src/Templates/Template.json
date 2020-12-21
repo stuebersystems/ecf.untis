@@ -1,0 +1,30 @@
+{
+	"Untis" : {
+		"EcfExport": {
+			"SourceFolderName": ".\\untis",
+			"Utf8": false,
+			"FolderName": ".\\untis\\ecf-export",
+			"Files": [
+				{ "Name": "Courses" },
+				{ "Name": "Departments" },
+				{ "Name": "LessonGaps" },
+				{ "Name": "RoomAbsenceReasons" },
+				{ "Name": "RoomAbsences" },
+				{ "Name": "Rooms" },
+				{ "Name": "ScheduledLessons" },
+				{ "Name": "SchoolClassAbsenceReasons" },
+				{ "Name": "SchoolClassAbsences" },
+				{ "Name": "SchoolClasses" },
+				{ "Name": "Students" },
+				{ "Name": "StudentSchoolClassAttendances" },
+				{ "Name": "Subjects" },
+				{ "Name": "SubstituteLessons" },
+				{ "Name": "TeacherAbsenceReasons" },
+				{ "Name": "TeacherAbsences" },
+				{ "Name": "Teachers" },
+				{ "Name": "Timeframes" },
+				{ "Name": "Vaccations" }
+			]
+		}   
+	}
+}
