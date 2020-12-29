@@ -115,7 +115,7 @@ namespace Ecf.Untis
             {
                 idList.Add("RM_" + substitution.StandInRoom);
             }
-            else
+            else if (!string.IsNullOrEmpty(substitution.Room))
             {
                 idList.Add("RM_" + substitution.Room);
             }
@@ -143,7 +143,7 @@ namespace Ecf.Untis
             {
                 idList.Add("TR_" + substitution.StandInTeacher);
             }
-            else 
+            else if (!string.IsNullOrEmpty(substitution.AbsentTeacher))
             {
                 idList.Add("TR_" + substitution.AbsentTeacher);
             }
