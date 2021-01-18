@@ -1,8 +1,8 @@
-﻿#region ENBREA - Copyright (C) 2020 STÜBER SYSTEMS GmbH
+﻿#region ENBREA - Copyright (C) 2021 STÜBER SYSTEMS GmbH
 /*    
  *    ENBREA 
  *    
- *    Copyright (C) 2020 STÜBER SYSTEMS GmbH
+ *    Copyright (C) 2021 STÜBER SYSTEMS GmbH
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License, version 3,
@@ -43,7 +43,7 @@ namespace Ecf.Untis
             }
             else
             {
-                return null;
+                return default;
             }
         }
 
@@ -70,22 +70,25 @@ namespace Ecf.Untis
                 }
                 else
                 {
-                    return null; 
+                    return default; 
                 }
             }
             else 
             {
-                throw new Exception($"No XML lesson found for substitution {substitution.Id}");
+                return default;
             }
         }
 
-        public static List<EcfGapReason> GetEcfReasons(this GpuSubstitution substitution)
+        public static List<EcfGapReason> GetEcfReasons(this GpuSubstitution substitution, HashSet<uint> absencesCache)
         {
             var gapReasons = new List<EcfGapReason>();
 
             if (substitution.AbsenceId != null)
             {
-                gapReasons.Add(new EcfAbsenceGapReason() { AbsenceId = substitution.AbsenceId?.ToString() });
+                if (absencesCache.Contains((uint)substitution.AbsenceId))
+                {
+                    gapReasons.Add(new EcfAbsenceGapReason() { AbsenceId = substitution.AbsenceId?.ToString() });
+                }
             }
 
             return gapReasons;
@@ -101,7 +104,7 @@ namespace Ecf.Untis
             }
             else
             {
-                gapResolutions.Add(new EcfLessonGapSubstitution() { SubstitutionId = substitution.GetEcfId() });
+                gapResolutions.Add(new EcfLessonGapSubstitution() { SubstituteLessonId = substitution.GetEcfId() });
             }
 
             return gapResolutions;
@@ -115,7 +118,7 @@ namespace Ecf.Untis
             {
                 idList.Add("RM_" + substitution.StandInRoom);
             }
-            else
+            else if (!string.IsNullOrEmpty(substitution.Room))
             {
                 idList.Add("RM_" + substitution.Room);
             }
@@ -143,7 +146,7 @@ namespace Ecf.Untis
             {
                 idList.Add("TR_" + substitution.StandInTeacher);
             }
-            else 
+            else if (!string.IsNullOrEmpty(substitution.AbsentTeacher))
             {
                 idList.Add("TR_" + substitution.AbsentTeacher);
             }

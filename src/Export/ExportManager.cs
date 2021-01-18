@@ -1,8 +1,8 @@
-﻿#region ENBREA - Copyright (C) 2020 STÜBER SYSTEMS GmbH
+﻿#region ENBREA - Copyright (C) 2021 STÜBER SYSTEMS GmbH
 /*    
  *    ENBREA
  *    
- *    Copyright (C) 2020 STÜBER SYSTEMS GmbH
+ *    Copyright (C) 2021 STÜBER SYSTEMS GmbH
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License, version 3,
@@ -24,8 +24,8 @@ using Enbrea.Ecf;
 using Enbrea.Untis.Gpu;
 using Enbrea.Untis.Xml;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,8 +36,8 @@ namespace Ecf.Untis
     {
         private int _recordCounter = 0;
         private int _tableCounter = 0;
+        private HashSet<uint> _untisAbsencesCache;
         private UntisDocument _untisDocument;
-
         public ExportManager(
             Configuration config,
             CancellationToken cancellationToken = default,
@@ -46,18 +46,21 @@ namespace Ecf.Untis
         {
         }
 
-        public async override Task Execute(bool ThrowExecptions = false)
+        public async override Task Execute()
         {
             try
             {
                 // Load Untis XML export file
                 _untisDocument = UntisDocument.Load(Path.Combine(_config.EcfExport.SourceFolderName, "untis.xml"));
 
+                _untisAbsencesCache = new HashSet<uint>();
+
                 // Init counters
                 _tableCounter = 0;
                 _recordCounter = 0;
 
                 // Report status
+                Console.WriteLine();
                 Console.WriteLine("[Extracting] Start...");
 
                 // Preperation
@@ -87,39 +90,31 @@ namespace Ecf.Untis
                 // Report status
                 Console.WriteLine($"[Extracting] {_tableCounter} table(s) and {_recordCounter} record(s) extracted");
             }
-            catch (Exception ex)
+            catch
             {
-                if (!ThrowExecptions)
-                {
-                    // Report error 
-                    Console.WriteLine();
-                    Console.WriteLine($"[Error] Extracting failed. Only {_tableCounter} table(s) and {_recordCounter} record(s) extracted");
-                    Console.WriteLine($"[Error] Reason: {ex.Message}");
-                }
-                else
-                {
-                    throw;
-                }
+                // Report error 
+                Console.WriteLine();
+                Console.WriteLine($"[Error] Extracting failed. Only {_tableCounter} table(s) and {_recordCounter} record(s) extracted");
+                throw;
             }
         }
 
         private async Task Execute(string ecfTableName, UntisDocument untisDocument, Func<UntisDocument, EcfTableWriter, string[], Task<int>> action)
         {
-            EcfExportFile ecfFile = _config.EcfExport?.Files?.FirstOrDefault(x => x.Name.ToLower() == ecfTableName.ToLower());
-            if (ecfFile != null)
+            if (ShouldExportTable(ecfTableName, out var ecfFile))
             {
                 // Report status
                 Console.WriteLine($"[Extracting] [{ecfTableName}] Start...");
 
                 // Generate ECF file name
-                var ecfFileName = Path.ChangeExtension(Path.Combine(_config.EcfExport.FolderName, ecfTableName), "csv");
+                var ecfFileName = Path.ChangeExtension(Path.Combine(_config.EcfExport.TargetFolderName, ecfTableName), "csv");
 
                 // Create ECF file stream and ECF Writer for export
                 using var ecfWriterStream = new FileStream(ecfFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
                 using var ecfWriter = new CsvWriter(ecfWriterStream, Encoding.UTF8);
 
                 // Call table specific action
-                var ecfRecordCounter = await action(untisDocument, new EcfTableWriter(ecfWriter), ecfFile.Headers);
+                var ecfRecordCounter = await action(untisDocument, new EcfTableWriter(ecfWriter), ecfFile?.Headers);
 
                 // Inc counters
                 _recordCounter += ecfRecordCounter;
@@ -132,8 +127,7 @@ namespace Ecf.Untis
 
         private async Task Execute(string ecfTableName, string gpuFileName, Func<CsvReader, EcfTableWriter, string[], Task<int>> action)
         {
-            EcfExportFile ecfFile = _config.EcfExport?.Files?.FirstOrDefault(x => x.Name.ToLower() == ecfTableName.ToLower());
-            if (ecfFile != null)
+            if (ShouldExportTable(ecfTableName, out var ecfFile))
             {
                 // Report status
                 Console.WriteLine($"[Extracting] [{ecfTableName}] Start...");
@@ -144,14 +138,14 @@ namespace Ecf.Untis
                 csvReader.Configuration.Separator = ',';
 
                 // Generate ECF file name
-                var ecfFileName = Path.ChangeExtension(Path.Combine(_config.EcfExport.FolderName, ecfTableName), "csv");
+                var ecfFileName = Path.ChangeExtension(Path.Combine(_config.EcfExport.TargetFolderName, ecfTableName), "csv");
 
                 // Create ECF file stream and ECF Writer for export
                 using var ecfWriterStream = new FileStream(ecfFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
                 using var ecfWriter = new CsvWriter(ecfWriterStream, Encoding.UTF8);
 
                 // Call table specific action
-                var ecfRecordCounter = await action(csvReader, new EcfTableWriter(ecfWriter), ecfFile.Headers);
+                var ecfRecordCounter = await action(csvReader, new EcfTableWriter(ecfWriter), ecfFile?.Headers);
 
                 // Inc counters
                 _recordCounter += ecfRecordCounter;
@@ -296,11 +290,11 @@ namespace Ecf.Untis
             {
                 if (substitution.Date >= _untisDocument.GeneralSettings.TermBeginDate &&
                     substitution.Date <= _untisDocument.GeneralSettings.TermEndDate &&
-                    substitution.GetEcfCourseId(_untisDocument.Lessons) != null)
+                    substitution.GetEcfLessonId(_untisDocument.Lessons) != null)
                 {
                     ecfTableWriter.TrySetValue(EcfHeaders.Id, substitution.GetEcfLessonGapId());
                     ecfTableWriter.TrySetValue(EcfHeaders.LessonId, substitution.GetEcfLessonId(_untisDocument.Lessons));
-                    ecfTableWriter.TrySetValue(EcfHeaders.Reasons, substitution.GetEcfReasons());
+                    ecfTableWriter.TrySetValue(EcfHeaders.Reasons, substitution.GetEcfReasons(_untisAbsencesCache));
                     ecfTableWriter.TrySetValue(EcfHeaders.Resolutions, substitution.GetEcfResolutions());
                     ecfTableWriter.TrySetValue(EcfHeaders.Description, substitution.Remark);
                     ecfTableWriter.TrySetValue(EcfHeaders.TemporalExpressions, substitution.GetEcfTemporalExpressions(_untisDocument.TimeGrids, _untisDocument.Lessons));
@@ -348,6 +342,7 @@ namespace Ecf.Untis
 
                     await ecfTableWriter.WriteAsync();
 
+                    _untisAbsencesCache.Add(absence.Id);
                     ecfRecordCounter++;
                 }
             }
@@ -471,6 +466,7 @@ namespace Ecf.Untis
 
                     await ecfTableWriter.WriteAsync();
 
+                    _untisAbsencesCache.Add(absence.Id);
                     ecfRecordCounter++;
                 }
             }
@@ -693,6 +689,7 @@ namespace Ecf.Untis
 
                     await ecfTableWriter.WriteAsync();
 
+                    _untisAbsencesCache.Add(absence.Id);
                     ecfRecordCounter++;
                 }
             }
@@ -799,21 +796,6 @@ namespace Ecf.Untis
             }
 
             return ecfRecordCounter;
-        }
-
-        private void PrepareExportFolder()
-        {
-            if (Directory.Exists(_config.EcfExport.FolderName))
-            {
-                foreach (var fileName in Directory.EnumerateFiles(_config.EcfExport.FolderName, "*.csv"))
-                {
-                    File.Delete(fileName);
-                }
-            }
-            else
-            {
-                Directory.CreateDirectory(_config.EcfExport?.FolderName);
-            }
         }
     }
 }
