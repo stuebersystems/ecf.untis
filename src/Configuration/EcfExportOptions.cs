@@ -29,7 +29,7 @@ namespace Ecf.Untis
         public char Separator { get; set; } = ';';
         public bool SourceFilesAsUtf8 { get; set; } = false;
         public char SourceFilesQuote { get; set; } = '"';
-        public char SourceFilesSeprator { get; set; } = ';';
+        public char SourceFilesSeparator { get; set; } = ',';
         public string SourceFolderName { get; set; } = ".\\untis";
         public string TargetFolderName { get; set; } = ".\\untis\\ecf-export";
     }
