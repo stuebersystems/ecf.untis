@@ -134,8 +134,9 @@ namespace Ecf.Untis
 
                 // Open CSV file stream and CSV Reader for import
                 using var csvReaderStream = new FileStream(Path.Combine(_config.EcfExport.SourceFolderName, gpuFileName), FileMode.Open, FileAccess.Read, FileShare.None);
-                using var csvReader = new CsvReader(csvReaderStream, _config.EcfExport.Utf8 ? Encoding.UTF8 : Encoding.GetEncoding(28591));
-                csvReader.Configuration.Separator = ',';
+                using var csvReader = new CsvReader(csvReaderStream, _config.EcfExport.SourceFilesAsUtf8 ? Encoding.UTF8 : Encoding.GetEncoding(28591/*Western European (ISO)*/));
+                csvReader.Configuration.Separator = _config.EcfExport.SourceFilesSeprator;
+                csvReader.Configuration.Quote = _config.EcfExport.SourceFilesQuote;
 
                 // Generate ECF file name
                 var ecfFileName = Path.ChangeExtension(Path.Combine(_config.EcfExport.TargetFolderName, ecfTableName), "csv");

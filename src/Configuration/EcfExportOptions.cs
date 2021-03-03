@@ -27,8 +27,10 @@ namespace Ecf.Untis
     {
         public ICollection<EcfExportFile> Files { get; set; } = new List<EcfExportFile>();
         public char Separator { get; set; } = ';';
+        public bool SourceFilesAsUtf8 { get; set; } = false;
+        public char SourceFilesQuote { get; set; } = '"';
+        public char SourceFilesSeprator { get; set; } = ';';
         public string SourceFolderName { get; set; } = ".\\untis";
         public string TargetFolderName { get; set; } = ".\\untis\\ecf-export";
-        public bool Utf8 { get; set; } = false;
     }
 }
