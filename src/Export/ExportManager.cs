@@ -334,17 +334,20 @@ namespace Ecf.Untis
             {
                 if (absence.Type == GpuAbsenceType.Room)
                 {
-                    ecfTableWriter.TrySetValue(EcfHeaders.Id, absence.Id);
-                    ecfTableWriter.TrySetValue(EcfHeaders.RoomId, absence.GetUntisRoomId());
-                    ecfTableWriter.TrySetValue(EcfHeaders.StartTimepoint, absence.StartDate);
-                    ecfTableWriter.TrySetValue(EcfHeaders.EndTimepoint, absence.EndDate);
-                    ecfTableWriter.TrySetValue(EcfHeaders.ReasonId, absence.Reason);
-                    ecfTableWriter.TrySetValue(EcfHeaders.Description, absence.Text);
+                    if (absence.IsInsideTerm(_untisDocument.GeneralSettings) && absence.GetEcfRoomId(_untisDocument.Rooms) != null)
+                    {
+                        ecfTableWriter.TrySetValue(EcfHeaders.Id, absence.Id);
+                        ecfTableWriter.TrySetValue(EcfHeaders.RoomId, absence.GetUntisRoomId());
+                        ecfTableWriter.TrySetValue(EcfHeaders.StartTimepoint, absence.StartDate);
+                        ecfTableWriter.TrySetValue(EcfHeaders.EndTimepoint, absence.EndDate);
+                        ecfTableWriter.TrySetValue(EcfHeaders.ReasonId, absence.Reason);
+                        ecfTableWriter.TrySetValue(EcfHeaders.Description, absence.Text);
 
-                    await ecfTableWriter.WriteAsync();
+                        await ecfTableWriter.WriteAsync();
 
-                    _untisAbsencesCache.Add(absence.Id);
-                    ecfRecordCounter++;
+                        _untisAbsencesCache.Add(absence.Id);
+                        ecfRecordCounter++;
+                    }
                 }
             }
 
@@ -458,17 +461,20 @@ namespace Ecf.Untis
             {
                 if (absence.Type == GpuAbsenceType.Class)
                 {
-                    ecfTableWriter.TrySetValue(EcfHeaders.Id, absence.Id);
-                    ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassId, absence.GetUntisSchoolClassId());
-                    ecfTableWriter.TrySetValue(EcfHeaders.StartTimepoint, absence.StartDate);
-                    ecfTableWriter.TrySetValue(EcfHeaders.EndTimepoint, absence.EndDate);
-                    ecfTableWriter.TrySetValue(EcfHeaders.ReasonId, absence.Reason);
-                    ecfTableWriter.TrySetValue(EcfHeaders.Description, absence.Text);
+                    if (absence.IsInsideTerm(_untisDocument.GeneralSettings) && absence.GetEcfSchoolClassId(_untisDocument.Classes) != null)
+                    {
+                        ecfTableWriter.TrySetValue(EcfHeaders.Id, absence.Id);
+                        ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassId, absence.GetUntisSchoolClassId());
+                        ecfTableWriter.TrySetValue(EcfHeaders.StartTimepoint, absence.StartDate);
+                        ecfTableWriter.TrySetValue(EcfHeaders.EndTimepoint, absence.EndDate);
+                        ecfTableWriter.TrySetValue(EcfHeaders.ReasonId, absence.Reason);
+                        ecfTableWriter.TrySetValue(EcfHeaders.Description, absence.Text);
 
-                    await ecfTableWriter.WriteAsync();
+                        await ecfTableWriter.WriteAsync();
 
-                    _untisAbsencesCache.Add(absence.Id);
-                    ecfRecordCounter++;
+                        _untisAbsencesCache.Add(absence.Id);
+                        ecfRecordCounter++;
+                    }
                 }
             }
 
@@ -681,17 +687,20 @@ namespace Ecf.Untis
             {
                 if (absence.Type == GpuAbsenceType.Teacher)
                 {
-                    ecfTableWriter.TrySetValue(EcfHeaders.Id, absence.Id);
-                    ecfTableWriter.TrySetValue(EcfHeaders.TeacherId, absence.GetUntisTeacherId());
-                    ecfTableWriter.TrySetValue(EcfHeaders.StartTimepoint, absence.StartDate);
-                    ecfTableWriter.TrySetValue(EcfHeaders.EndTimepoint, absence.EndDate);
-                    ecfTableWriter.TrySetValue(EcfHeaders.ReasonId, absence.Reason);
-                    ecfTableWriter.TrySetValue(EcfHeaders.Description, absence.Text);
+                    if (absence.IsInsideTerm(_untisDocument.GeneralSettings) && absence.GetEcfTeacherId(_untisDocument.Teachers) != null)
+                    {
+                        ecfTableWriter.TrySetValue(EcfHeaders.Id, absence.Id);
+                        ecfTableWriter.TrySetValue(EcfHeaders.TeacherId, absence.GetUntisTeacherId());
+                        ecfTableWriter.TrySetValue(EcfHeaders.StartTimepoint, absence.StartDate);
+                        ecfTableWriter.TrySetValue(EcfHeaders.EndTimepoint, absence.EndDate);
+                        ecfTableWriter.TrySetValue(EcfHeaders.ReasonId, absence.Reason);
+                        ecfTableWriter.TrySetValue(EcfHeaders.Description, absence.Text);
 
-                    await ecfTableWriter.WriteAsync();
+                        await ecfTableWriter.WriteAsync();
 
-                    _untisAbsencesCache.Add(absence.Id);
-                    ecfRecordCounter++;
+                        _untisAbsencesCache.Add(absence.Id);
+                        ecfRecordCounter++;
+                    }
                 }
             }
 

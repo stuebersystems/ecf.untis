@@ -20,6 +20,8 @@
 #endregion
 
 using Enbrea.Untis.Gpu;
+using Enbrea.Untis.Xml;
+using System.Collections.Generic;
 
 namespace Ecf.Untis
 {
@@ -28,6 +30,45 @@ namespace Ecf.Untis
     /// </summary>
     public static class GpuAbsenceExtensions
     {
+        public static string GetEcfRoomId(this GpuAbsence absence, List<UntisRoom> rooms)
+        {
+            var room = rooms.Find(x => x.Id == absence.GetUntisRoomId());
+            if (room != null)
+            {
+                return room.Id;
+            }
+            else
+            {
+                return default;
+            }
+        }
+
+        public static string GetEcfSchoolClassId(this GpuAbsence absence, List<UntisClass> schoolClasses)
+        {
+            var schoolClass = schoolClasses.Find(x => x.Id == absence.GetUntisSchoolClassId());
+            if (schoolClass != null)
+            {
+                return schoolClass.Id;
+            }
+            else
+            {
+                return default;
+            }
+        }
+
+        public static string GetEcfTeacherId(this GpuAbsence absence, List<UntisTeacher> teachers)
+        {
+            var teacher = teachers.Find(x => x.Id == absence.GetUntisTeacherId());
+            if (teacher != null)
+            {
+                return teacher.Id;
+            }
+            else
+            {
+                return default;
+            }
+        }
+
         public static string GetUntisRoomId(this GpuAbsence absence)
         {
             if (string.IsNullOrEmpty(absence.ShortName))
@@ -37,18 +78,6 @@ namespace Ecf.Untis
             else
             {
                 return "RM_" + absence.ShortName;
-            }
-        }
-
-        public static string GetUntisTeacherId(this GpuAbsence absence)
-        {
-            if (string.IsNullOrEmpty(absence.ShortName))
-            {
-                return null;
-            }
-            else 
-            {
-                return "TR_" + absence.ShortName;
             }
         }
 
@@ -62,6 +91,25 @@ namespace Ecf.Untis
             {
                 return "CL_" + absence.ShortName;
             }
+        }
+
+        public static string GetUntisTeacherId(this GpuAbsence absence)
+        {
+            if (string.IsNullOrEmpty(absence.ShortName))
+            {
+                return null;
+            }
+            else
+            {
+                return "TR_" + absence.ShortName;
+            }
+        }
+
+        public static bool IsInsideTerm(this GpuAbsence absence, UntisGeneralSettings generalSettings)
+        {
+            return
+                (absence.StartDate >= generalSettings.TermBeginDate && absence.StartDate <= generalSettings.TermEndDate) ||
+                (absence.EndDate >= generalSettings.TermBeginDate && absence.EndDate <= generalSettings.TermEndDate);
         }
     }
 }
