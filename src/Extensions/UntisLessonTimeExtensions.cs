@@ -22,7 +22,6 @@
 using Enbrea.Ecf;
 using Enbrea.Untis.Xml;
 using System;
-using System.Collections.Generic;
 
 namespace Ecf.Untis
 {
@@ -48,18 +47,6 @@ namespace Ecf.Untis
         public static string GetEcfId(this UntisLessonTime lessonTime, UntisLesson lesson)
         {
             return lesson.Id + "_" + (uint)lessonTime.Day + "_" + lessonTime.Slot; 
-        }
-
-        public static List<string> GetEcfRoomIdList(this UntisLessonTime lessonTime)
-        {
-            var idList = new List<string>();
-
-            if (!string.IsNullOrEmpty(lessonTime.RoomId))
-            {
-                idList.Add(lessonTime.RoomId);
-            }
-
-            return idList;
         }
     }
 }

@@ -423,7 +423,7 @@ namespace Ecf.Untis
                         ecfTableWriter.TrySetValue(EcfHeaders.SubjectId, lesson.SubjectId);
                         ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassIdList, lesson.ClassIds);
                         ecfTableWriter.TrySetValue(EcfHeaders.TeacherIdList, lesson.GetEcfTeacherIdList());
-                        ecfTableWriter.TrySetValue(EcfHeaders.RoomIdList, lessonTime.GetEcfRoomIdList());
+                        ecfTableWriter.TrySetValue(EcfHeaders.RoomIdList, lessonTime.RoomIds);
                         ecfTableWriter.TrySetValue(EcfHeaders.TemporalExpressions, lesson.GetEcfTemporalExpressions(lessonTime, untisDocument.GeneralSettings));
 
                         await ecfTableWriter.WriteAsync();
@@ -776,6 +776,7 @@ namespace Ecf.Untis
 
             return ecfRecordCounter;
         }
+
         private async Task<int> ExportVaccations(UntisDocument untisDocument, EcfTableWriter ecfTableWriter, string[] ecfHeaders)
         {
             var ecfRecordCounter = 0;
