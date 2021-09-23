@@ -112,18 +112,14 @@ namespace Ecf.Untis
 
         public static List<string> GetEcfRoomIdList(this GpuSubstitution substitution)
         {
-            var idList = new List<string>();
-
-            if (!string.IsNullOrEmpty(substitution.StandInRoom))
+            if (substitution.StandInRooms.Count > 0)
             {
-                idList.Add("RM_" + substitution.StandInRoom);
+                return substitution.StandInRooms.Select(x => "RM_" + x).ToList();
             }
-            else if (!string.IsNullOrEmpty(substitution.Room))
+            else
             {
-                idList.Add("RM_" + substitution.Room);
+                return substitution.Rooms.Select(x => "RM_" + x).ToList();
             }
-
-            return idList;
         }
 
         public static List<string> GetEcfSchoolClassIdList(this GpuSubstitution substitution)
