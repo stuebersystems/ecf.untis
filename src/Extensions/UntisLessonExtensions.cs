@@ -68,8 +68,8 @@ namespace Ecf.Untis
                     EndTimepoint = new DateTimeOffset((DateTime)lesson.EndDate).AddMinutes(lessonTime.SlotGroupEndTime == null ? lessonTime.EndTime.TotalMinutes : ((TimeSpan)lessonTime.SlotGroupEndTime).TotalMinutes),
                     DaysOfWeek = lessonTime.GetEcfDaysOfWeek(),
                     WeeksInterval = 1,
-                    ValidFrom = lesson.ValidFrom != null ? new Date((DateTime)lesson.ValidFrom) : (Date?)null,
-                    ValidTo = lesson.ValidTo != null ? new Date((DateTime)lesson.ValidTo) : (Date?)null
+                    ValidFrom = lesson.ValidFrom,
+                    ValidTo = lesson.ValidTo
                 });
             }
 
