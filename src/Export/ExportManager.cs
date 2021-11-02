@@ -36,8 +36,9 @@ namespace Ecf.Untis
     {
         private int _recordCounter = 0;
         private int _tableCounter = 0;
-        private HashSet<uint> _untisAbsencesCache;
+        private HashSet<uint> _untisAbsencesCache = new HashSet<uint>();
         private UntisDocument _untisDocument;
+
         public ExportManager(
             Configuration config,
             CancellationToken cancellationToken = default,
@@ -53,8 +54,6 @@ namespace Ecf.Untis
                 // Load Untis XML export file
                 _untisDocument = UntisDocument.Load(Path.Combine(_config.EcfExport.SourceFolderName, "untis.xml"));
 
-                _untisAbsencesCache = new HashSet<uint>();
-
                 // Init counters
                 _tableCounter = 0;
                 _recordCounter = 0;
@@ -65,6 +64,9 @@ namespace Ecf.Untis
 
                 // Preperation
                 PrepareExportFolder();
+
+                // Global
+                await ExportGlobal(EcfTables.Global, _untisDocument);
 
                 // Education
                 await Execute(EcfTables.Departments, _untisDocument, async (r, w, h) => await ExportDepartments(r, w, h));
@@ -264,6 +266,35 @@ namespace Ecf.Untis
             }
 
             return ecfRecordCounter;
+        }
+
+        private async Task ExportGlobal(string ecfTableName, UntisDocument untisDocument)
+        {
+            // Report status
+            Console.WriteLine($"[Extracting] [{ecfTableName}] Start...");
+
+            // Create ECF dictionary
+            var ecfDictionary = new CsvDictionary();
+
+            // Fill ECF dictionary
+            ecfDictionary.SetValue(EcfKeys.ScheduleStartDate, (Date)untisDocument.GeneralSettings.TermBeginDate);
+            ecfDictionary.SetValue(EcfKeys.ScheduleEndDate, (Date)untisDocument.GeneralSettings.TermEndDate);
+
+            // Generate ECF file name
+            var ecfFileName = Path.ChangeExtension(Path.Combine(_config.EcfExport.TargetFolderName, ecfTableName), "csv");
+
+            // Create ECF file stream and ECF Writer for export
+            using var ecfWriterStream = new FileStream(ecfFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+            using var ecfWriter = new CsvWriter(ecfWriterStream, Encoding.UTF8);
+
+            // Write ECF dictionary
+            await ecfDictionary.StoreAsync(ecfWriter);
+
+            // Inc counters
+            _tableCounter++;
+
+            // Report status
+            Console.WriteLine($"[Extracting] [{ecfTableName}] {ecfDictionary.Count} record(s) extracted");
         }
 
         private async Task<int> ExportLessonGaps(CsvReader csvReader, EcfTableWriter ecfTableWriter, string[] ecfHeaders)
