@@ -277,8 +277,8 @@ namespace Ecf.Untis
             var ecfDictionary = new CsvDictionary();
 
             // Fill ECF dictionary
-            ecfDictionary.SetValue(EcfKeys.ScheduleStartDate, (Date)untisDocument.GeneralSettings.TermBeginDate);
-            ecfDictionary.SetValue(EcfKeys.ScheduleEndDate, (Date)untisDocument.GeneralSettings.TermEndDate);
+            ecfDictionary.SetValue(EcfKeys.ScheduleValidFrom, (DateTimeOffset)untisDocument.GeneralSettings.TermBeginDate);
+            ecfDictionary.SetValue(EcfKeys.ScheduleValidTo, (DateTimeOffset)untisDocument.GeneralSettings.TermEndDate);
 
             // Generate ECF file name
             var ecfFileName = Path.ChangeExtension(Path.Combine(_config.EcfExport.TargetFolderName, ecfTableName), "csv");
