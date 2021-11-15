@@ -274,7 +274,7 @@ namespace Ecf.Untis
             Console.WriteLine($"[Extracting] [{ecfTableName}] Start...");
 
             // Create ECF dictionary
-            var ecfDictionary = new CsvDictionary();
+            var ecfDictionary = new EcfDictionary();
 
             // Fill ECF dictionary
             ecfDictionary.SetValue(EcfKeys.ScheduleValidFrom, (DateTimeOffset)untisDocument.GeneralSettings.TermBeginDate);
